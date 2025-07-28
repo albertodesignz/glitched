@@ -1,6 +1,10 @@
 # GLITCHED
 
-![glitched] (img/model1.png)
+GLITCHED
+
+## Glitched
+
+![glitched](img/model1.png)
 
 > **"Reality is just a perception glitch in the virtual world."**
 
