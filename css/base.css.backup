@@ -1,0 +1,677 @@
+*,
+*::after,
+*::before {
+	box-sizing: border-box;
+}
+
+:root {
+	font-size: 16px;
+	--page-padding: 2rem;
+	--color-text: #000;
+	--color-bg: #fff;
+	--color-link: rgba(0,0,0,0.8);
+	--color-link-hover: #000;
+	--color-list-item: #000;
+	--color-title: #000;
+	--color-number: #000;
+  --color-bg-effect: white;
+  --blendmode-effect: difference;
+  --bg-blur: 0px;
+  --font-size-list-item: 16px;
+}
+
+body {
+	margin-top: 0;
+	color: var(--color-text);
+	background-color: var(--color-bg);
+	font-family: "JetBrains Mono", monospace;
+	font-weight: 300;
+	font-optical-sizing: auto;
+	text-transform: uppercase;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	min-height: 100vh;
+	cursor: none;
+}
+
+body::after {
+	content: '';
+	position: absolute;
+	top: 100;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background-image: repeating-linear-gradient(transparent, transparent 2px, #0000003d 3px);
+	background-size: auto 100%;
+	pointer-events: none;
+}
+
+.demo-4 {
+	background-image: url(../img/noise.png), url(../img/bg.jpg);
+	/* background-size: 100px, cover; */
+	background-position: 50% 50%;
+	--color-text: #00ff88;
+	--color-bg: #000;
+	--color-link: #00ff88;
+	--color-link-hover: #ffffff;
+	--color-list-item: #00ff88;
+	--color-title: #00ff88;
+	--color-number: #00ff88;
+	--color-bg-effect: rgba(0, 255, 136, 0.2);
+	--blendmode-effect: screen;
+	--bg-blur: 5px;
+	--font-size-list-item: 0.75rem;
+	overflow: hidden;
+}
+
+.demo-4::after {
+  display: none;
+}
+
+/* Terminal Background Styles for Demo 5 */
+
+.demo-5::after {
+  display: none;
+}
+
+
+
+
+@keyframes terminal-typing {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 0.8;
+    transform: translateY(0);
+  }
+}
+
+/* Cursor blink animation */
+.terminal-line:last-child::after {
+  content: '_';
+  animation: cursor-blink 1s infinite;
+}
+
+@keyframes cursor-blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* VR Text Glitch Effect */
+.vr-glitch .list__item-col {
+	position: relative;
+	animation: text-glitch 0.8s ease-in-out;
+}
+
+.vr-glitch .list__item-col::before,
+.vr-glitch .list__item-col::after {
+	content: attr(data-text);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.vr-glitch .list__item-col::before {
+	color: #ff0040;
+	animation: glitch-1 0.8s ease-in-out;
+	z-index: 1;
+}
+
+.vr-glitch .list__item-col::after {
+	color: #00ffff;
+	animation: glitch-2 0.8s ease-in-out;
+	z-index: 2;
+}
+
+@keyframes text-glitch {
+	0%, 100% {
+		transform: translate(0);
+		filter: hue-rotate(0deg);
+	}
+	10% {
+		transform: translate(-2px, 2px);
+		filter: hue-rotate(90deg);
+	}
+	20% {
+		transform: translate(2px, -2px);
+		filter: hue-rotate(180deg);
+	}
+	30% {
+		transform: translate(-1px, 1px);
+		filter: hue-rotate(270deg);
+	}
+	40% {
+		transform: translate(1px, -1px);
+		filter: hue-rotate(360deg);
+	}
+	50% {
+		transform: translate(-3px, 3px);
+		filter: hue-rotate(180deg);
+	}
+	60% {
+		transform: translate(3px, -3px);
+		filter: hue-rotate(90deg);
+	}
+	70% {
+		transform: translate(-1px, 1px);
+		filter: hue-rotate(270deg);
+	}
+	80% {
+		transform: translate(1px, -1px);
+		filter: hue-rotate(0deg);
+	}
+	90% {
+		transform: translate(-2px, 2px);
+		filter: hue-rotate(180deg);
+	}
+}
+
+@keyframes glitch-1 {
+	0%, 100% {
+		transform: translate(0);
+		opacity: 0;
+	}
+	10% {
+		transform: translate(-2px, 0);
+		opacity: 0.8;
+	}
+	20% {
+		transform: translate(2px, 0);
+		opacity: 0;
+	}
+	30% {
+		transform: translate(-1px, 0);
+		opacity: 0.6;
+	}
+	40% {
+		transform: translate(1px, 0);
+		opacity: 0;
+	}
+	50% {
+		transform: translate(-3px, 0);
+		opacity: 0.9;
+	}
+	60% {
+		transform: translate(3px, 0);
+		opacity: 0;
+	}
+	70% {
+		transform: translate(-1px, 0);
+		opacity: 0.7;
+	}
+	80% {
+		transform: translate(1px, 0);
+		opacity: 0;
+	}
+	90% {
+		transform: translate(-2px, 0);
+		opacity: 0.5;
+	}
+}
+
+@keyframes glitch-2 {
+	0%, 100% {
+		transform: translate(0);
+		opacity: 0;
+	}
+	15% {
+		transform: translate(2px, 0);
+		opacity: 0.7;
+	}
+	25% {
+		transform: translate(-2px, 0);
+		opacity: 0;
+	}
+	35% {
+		transform: translate(1px, 0);
+		opacity: 0.5;
+	}
+	45% {
+		transform: translate(-1px, 0);
+		opacity: 0;
+	}
+	55% {
+		transform: translate(3px, 0);
+		opacity: 0.8;
+	}
+	65% {
+		transform: translate(-3px, 0);
+		opacity: 0;
+	}
+	75% {
+		transform: translate(1px, 0);
+		opacity: 0.6;
+	}
+	85% {
+		transform: translate(-1px, 0);
+		opacity: 0;
+	}
+	95% {
+		transform: translate(2px, 0);
+		opacity: 0.4;
+	}
+}
+
+/* Glitch effect for terminal */
+.terminal-window::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 49%, rgba(0, 255, 0, 0.1) 50%, transparent 51%);
+  background-size: 4px 4px;
+  animation: glitch 0.3s infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes glitch {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* Responsive terminal */
+@media screen and (max-width: 768px) {
+  .terminal-window {
+    width: 95%;
+    height: 70%;
+  }
+  
+  .terminal-content {
+    font-size: 10px;
+    padding: 12px;
+  }
+  
+  .terminal-title {
+    font-size: 10px;
+  }
+}
+
+
+
+main {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	justify-content: space-around;
+	flex-wrap: nowrap;
+	align-content: space-around;
+	margin-top: 15px;
+}
+
+.demo-5 main {
+	mix-blend-mode: difference;
+}
+
+a {
+	text-decoration: none;
+	color: var(--color-link);
+	outline: none;
+	cursor: pointer;
+}
+
+a:hover {
+	text-decoration: none;
+	color: var(--color-link-hover);
+	outline: none;
+}
+
+/* Better focus styles from https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible */
+a:focus {
+	/* Provide a fallback style for browsers
+	 that don't support :focus-visible */
+	outline: none;
+}
+
+a:focus-visible {
+	/* Draw a very noticeable focus style for
+	 keyboard-focus on browsers that do support
+	 :focus-visible */
+	outline: 2px solid red;
+}
+
+.unbutton {
+	background: none;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	cursor: pointer;
+}
+
+.unbutton:focus {
+	outline: none;
+}
+
+.frame {
+	font-size: 12px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	padding: var(--page-padding);
+	position: relative;
+	display: grid;
+	grid-row-gap: 1rem;
+	grid-column-gap: 2rem;
+	align-items: start;
+	pointer-events: none;
+	justify-items: start;
+	grid-template-columns: auto auto;
+	grid-template-areas: 'title' 'archive' 'back' 'github' 'sponsor' 'demos';
+}
+
+.frame #cdawrap {
+	justify-self: start;
+}
+
+.frame a {
+  pointer-events: auto;
+}
+
+.frame__title {
+  grid-area: title;
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
+.frame__back {
+  grid-area: back;
+  justify-self: start;
+}
+
+.frame__archive {
+  grid-area: archive;
+  justify-self: start;
+}
+
+.frame__sub {
+  grid-area: sub;
+}
+
+.frame__github {
+  grid-area: github;
+}
+
+.frame__tags {
+  grid-area: tags;
+}
+
+.frame__hire {
+  grid-area: hire;
+}
+
+.frame__demos {
+	grid-area: demos;
+	display: flex;
+	gap: 1rem;
+}
+
+.list {
+	max-height: 160px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Hide scrollbar for WebKit browsers (Chrome, Safari, Edge) */
+.list::-webkit-scrollbar {
+	display: none;
+}
+.content {
+	display: flex;
+	flex-direction: column;
+	padding: 1.2rem;
+	justify-content: center;
+	align-items: center;
+	height: 160px;
+	position: relative;
+	text-align: left;
+	overflow: hidden;
+	margin-top: 25px;
+}
+
+.content::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 42vw;
+	height: 160px;
+	border: none;
+	border-radius: 20px;
+	background: transparent;
+	box-shadow: none;
+	pointer-events: none;
+	z-index: -1;
+	transition: all 0.3s ease;
+}
+
+/* VR glowing effect when active (no border) */
+.vr-active .content::before {
+	border: none;
+	box-shadow: 
+		0 0 60px rgba(255, 0, 64, 0.6),
+		inset 0 0 20px rgba(255, 0, 64, 0.2);
+	animation: vr-pulse 0.5s ease-in-out;
+}
+
+@keyframes vr-pulse {
+	0% {
+		box-shadow: 
+			0 0 60px rgba(255, 0, 64, 0.6),
+			inset 0 0 20px rgba(255, 0, 64, 0.2);
+	}
+	50% {
+		box-shadow: 
+			0 0 80px rgba(255, 0, 64, 0.8),
+			inset 0 0 30px rgba(255, 0, 64, 0.3);
+	}
+	100% {
+		box-shadow: 
+			0 0 60px rgba(255, 0, 64, 0.6),
+			inset 0 0 20px rgba(255, 0, 64, 0.2);
+	}
+}
+
+.content::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 38vw;
+	height: 140px;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 50%, rgba(255, 255, 255, 0.03) 100%);
+	border-radius: 0;
+	pointer-events: none;
+	z-index: -1;
+}
+
+.content__title {
+	font-size: 12px;
+	color: var(--color-title);
+}
+
+.spacer {
+	margin-top: 15vh;
+}
+
+.content p {
+	padding: 5vh var(--page-padding) 0;
+	font-size: 12px;
+	max-width: 900px;
+}
+
+.list__item {
+	font-size: var(--font-size-list-item);
+	cursor: pointer;
+	width: 100%;
+	display: grid;
+	color: var(--color-list-item);
+	grid-column-gap: 1rem;
+	padding: 0.05rem 0;
+	grid-template-columns: 100%;
+	justify-content: flex-start;
+	align-items: start;
+	justify-items: start;
+}
+
+.demo-4 .list__item {
+	padding: 0.1rem 0;
+}
+
+.list__item::before {
+	display: none;
+}
+
+.demo-4 .list__item::before {
+	font-size: 0.8rem;
+}
+
+.list--alt .list__item::before {
+  content: "EVT#" counter(item, decimal-leading-zero) "0";
+}
+
+.list__item-col {
+	flex: none;
+	padding: 2px 2px 0;
+	line-height: 1;
+}
+
+.hover-effect .word {
+  white-space: nowrap;
+}
+
+.hover-effect .char {
+  position: relative
+}
+
+.hover-effect {
+  font-kerning: none;
+  position: relative;
+  white-space: nowrap;
+}
+
+.hover-effect--cursor-square .char {
+  --opa: 0;
+}
+
+.hover-effect--cursor-square .char::after {
+	content: '';
+	width: 1ch;
+	top: 0;
+	left: 0;
+	position: absolute;
+	opacity: var(--opa);
+}
+
+.hover-effect--cursor-square .char::after {
+  background: currentColor;
+  height: 100%;
+}
+
+.hover-effect--bg,
+.hover-effect--bg-south {
+  --anim: 0;
+}
+
+.hover-effect--bg::after,
+.hover-effect--bg-south::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	width: 100%;
+	height: calc(100% + 3px);
+	top: 0;
+	background-color: var(--color-bg-effect);
+	mix-blend-mode: var(--blendmode-effect);
+	-webkit-backdrop-filter: blur(var(--bg-blur));
+	backdrop-filter: blur(var(--bg-blur));
+  transform-origin: 0% 50%;
+	transform: scaleX(var(--anim));
+}
+
+.hover-effect--bg-south::after {
+	z-index: -1;
+	left: -8px;
+	right: -8px;
+	top: -8px;
+	bottom: -8px;
+	border-radius: 2px;
+	height: auto;
+	width: auto;
+	transform-origin: 50% 100%;
+	transform: scaleY(var(--anim));
+}
+
+@media screen and (min-width: 40em) {
+	.list__item {
+		grid-template-columns: auto 1fr 1fr 1fr auto;
+	}
+	
+}
+
+@media screen and (min-width: 53em) {
+	.frame {
+		grid-template-columns: auto auto auto auto 1fr 1fr;
+		grid-template-areas: 'title back archive github demos sponsor';
+	}
+	.frame #cdawrap, 
+	.frame__demos {
+		justify-self: end;
+	}
+	.frame #cdawrap {
+	  text-align: right;
+	}
+}
+
+@media screen and (min-width: 73em) {
+	.list__item {
+		grid-template-columns: 100px 30% 1fr 1fr 1fr;
+	}
+	.demo-4 .list__item {
+		grid-template-columns: 100px 1fr 1fr auto ;
+	}
+	.list__item-col:last-child {
+		justify-self: center;
+	}
+}
+
+/* Smooth Cursor Styles */
+.smooth-cursor {
+	position: fixed;
+	pointer-events: none;
+	z-index: 10000;
+	transform: translate(-50%, -50%);
+	will-change: transform;
+	mix-blend-mode: difference;
+}
+
+.smooth-cursor svg {
+	filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.8));
+}
