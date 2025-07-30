@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GLITCHED VR Viewer</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      font-family: 'Courier New', Courier, monospace;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #glitched-label {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      font-size: 1.5em;
+      color: red;
+      letter-spacing: 2px;
+      z-index: 10;
+    }
+
+    #container {
+      display: flex;
+      height: 100vh;
+      width: 100%;
+    }
+
+    .code-column {
+      width: 25%;
+      background: black;
+      border-right: 1px solid rgba(255, 0, 0, 0.3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .code-column:last-child {
+      border-right: none;
+      border-left: 1px solid rgba(255, 0, 0, 0.3);
+    }
+
+    .code-scroll {
+      padding: 20px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #ff0000;
+      text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+      animation: code-scroll 20s linear infinite;
+      white-space: pre-wrap;
+    }
+
+    .code-scroll:nth-child(2) {
+      animation-delay: -10s;
+    }
+
+    @keyframes code-scroll {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100vh); }
+    }
+
+    .code-line {
+      margin-bottom: 8px;
+      opacity: 0.8;
+      transition: all 0.1s ease;
+    }
+
+    .code-line:hover {
+      opacity: 1;
+      text-shadow: 0 0 10px rgba(255, 0, 0, 1);
+    }
+
+    .glitch-text {
+      animation: text-glitch 0.3s ease-out;
+    }
+
+    @keyframes text-glitch {
+      0% { transform: translate(0); filter: hue-rotate(0deg); }
+      25% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+      50% { transform: translate(2px, -1px); filter: hue-rotate(180deg); }
+      75% { transform: translate(-1px, 1px); filter: hue-rotate(270deg); }
+      100% { transform: translate(0); filter: hue-rotate(360deg); }
+    }
+
+    #viewer {
+      width: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    #face {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: contrast(120%) grayscale(100%) brightness(90%);
+      transition: opacity 0.2s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    #footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      text-align: center;
+      padding: 10px 0;
+      font-size: 1em;
+      letter-spacing: 4px;
+      z-index: 10;
+    }
+
+    #footer span {
+      margin: 0 20px;
+      cursor: pointer;
+      color: gray;
+    }
+
+    #footer .active {
+      color: white;
+      text-decoration: underline;
+    }
+
+    /* Glitch Effects */
+    .glitch-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.1s ease;
+    }
+
+    .glitch-overlay.active {
+      opacity: 1;
+    }
+
+    .glitch-red {
+      background: linear-gradient(45deg, transparent 30%, rgba(255, 0, 0, 0.3) 50%, transparent 70%);
+      animation: glitch-red 0.2s ease-out;
+    }
+
+    .glitch-blue {
+      background: linear-gradient(-45deg, transparent 30%, rgba(0, 0, 255, 0.3) 50%, transparent 70%);
+      animation: glitch-blue 0.2s ease-out;
+    }
+
+    .glitch-green {
+      background: linear-gradient(90deg, transparent 30%, rgba(0, 255, 0, 0.3) 50%, transparent 70%);
+      animation: glitch-green 0.2s ease-out;
+    }
+
+    @keyframes glitch-red {
+      0% { transform: translate(0); filter: hue-rotate(0deg); }
+      25% { transform: translate(-5px, 2px); filter: hue-rotate(90deg); }
+      50% { transform: translate(5px, -2px); filter: hue-rotate(180deg); }
+      75% { transform: translate(-3px, 1px); filter: hue-rotate(270deg); }
+      100% { transform: translate(0); filter: hue-rotate(360deg); }
+    }
+
+    @keyframes glitch-blue {
+      0% { transform: translate(0); filter: hue-rotate(0deg); }
+      25% { transform: translate(5px, -2px); filter: hue-rotate(90deg); }
+      50% { transform: translate(-5px, 2px); filter: hue-rotate(180deg); }
+      75% { transform: translate(3px, -1px); filter: hue-rotate(270deg); }
+      100% { transform: translate(0); filter: hue-rotate(360deg); }
+    }
+
+    @keyframes glitch-green {
+      0% { transform: translate(0); filter: hue-rotate(0deg); }
+      25% { transform: translate(-3px, -1px); filter: hue-rotate(90deg); }
+      50% { transform: translate(3px, 1px); filter: hue-rotate(180deg); }
+      75% { transform: translate(-2px, 2px); filter: hue-rotate(270deg); }
+      100% { transform: translate(0); filter: hue-rotate(360deg); }
+    }
+
+    /* Screen Shake */
+    .screen-shake {
+      animation: screen-shake 0.3s ease-out;
+    }
+
+    @keyframes screen-shake {
+      0% { transform: translate(0); }
+      10% { transform: translate(-2px, -1px); }
+      20% { transform: translate(2px, 1px); }
+      30% { transform: translate(-1px, 2px); }
+      40% { transform: translate(1px, -2px); }
+      50% { transform: translate(-3px, 1px); }
+      60% { transform: translate(3px, -1px); }
+      70% { transform: translate(-2px, -1px); }
+      80% { transform: translate(2px, 1px); }
+      90% { transform: translate(-1px, 1px); }
+      100% { transform: translate(0); }
+    }
+
+    /* Distortion Effect */
+    .distortion {
+      animation: distortion 0.4s ease-out;
+    }
+
+    @keyframes distortion {
+      0% { filter: contrast(100%) brightness(100%) hue-rotate(0deg); }
+      25% { filter: contrast(150%) brightness(120%) hue-rotate(90deg); }
+      50% { filter: contrast(80%) brightness(80%) hue-rotate(180deg); }
+      75% { filter: contrast(200%) brightness(150%) hue-rotate(270deg); }
+      100% { filter: contrast(100%) brightness(100%) hue-rotate(360deg); }
+    }
+
+    /* Scan Lines */
+    .scan-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: repeating-linear-gradient(
+        transparent,
+        transparent 2px,
+        rgba(255, 0, 0, 0.1) 3px
+      );
+      pointer-events: none;
+      z-index: 3;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .scan-lines.active {
+      opacity: 1;
+    }
+
+    /* Noise Effect */
+    .noise {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.1"/></svg>');
+      pointer-events: none;
+      z-index: 4;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .noise.active {
+      opacity: 1;
+    }
+
+    /* Floating Code Snippets */
+    .floating-code {
+      position: fixed;
+      color: #ff0000;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .floating-code.visible {
+      opacity: 1;
+    }
+
+    .floating-code.glitch {
+      animation: floating-glitch 0.5s ease-out;
+    }
+
+    @keyframes floating-glitch {
+      0% { transform: translate(0); filter: hue-rotate(0deg); }
+      25% { transform: translate(-3px, 2px); filter: hue-rotate(90deg); }
+      50% { transform: translate(3px, -2px); filter: hue-rotate(180deg); }
+      75% { transform: translate(-2px, 1px); filter: hue-rotate(270deg); }
+      100% { transform: translate(0); filter: hue-rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="glitched-label">GLITCHED</div>
+  
+  <div id="container">
+    <!-- Left Code Column -->
+    <div class="code-column">
+      <div class="code-scroll">
+const glitchMatrix = {
+  initialize: () => {
+    console.log('Matrix glitch detected');
+    this.activateNeuralInterface();
+    this.establishConnection();
+    this.beginDataStream();
+  },
+  
+  activateNeuralInterface: () => {
+    const neuralNodes = document.querySelectorAll('.neural-node');
+    neuralNodes.forEach(node => {
+      node.classList.add('active');
+      node.style.animationDelay = Math.random() * 2 + 's';
+    });
+  },
+  
+  establishConnection: () => {
+    const connection = new WebSocket('wss://matrix.neural.net');
+    connection.onopen = () => {
+      console.log('Neural connection established');
+      this.beginDataStream();
+    };
+  },
+  
+  beginDataStream: () => {
+    setInterval(() => {
+      this.processNeuralData();
+      this.updateInterface();
+      this.syncWithMatrix();
+    }, 100);
+  },
+  
+  processNeuralData: () => {
+    const data = this.collectNeuralSignals();
+    this.analyzePatterns(data);
+    this.generateResponse();
+  },
+  
+  updateInterface: () => {
+    const elements = document.querySelectorAll('.matrix-element');
+    elements.forEach(element => {
+      element.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+      element.style.transform = `translate(${Math.random() * 10 - 5}px, ${Math.random() * 10 - 5}px)`;
+    });
+  },
+  
+  syncWithMatrix: () => {
+    this.matrixConnection.send({
+      type: 'neural_sync',
+      data: this.currentNeuralState,
+      timestamp: Date.now()
+    });
+  }
+};
+
+// Initialize the matrix
+glitchMatrix.initialize();
+      </div>
+    </div>
+
+    <!-- Middle Viewer -->
+    <div id="viewer">
+      <img id="face" src="img/face_center.png" alt="VR Face" />
+      <div class="glitch-overlay glitch-red"></div>
+      <div class="glitch-overlay glitch-blue"></div>
+      <div class="glitch-overlay glitch-green"></div>
+      <div class="scan-lines"></div>
+      <div class="noise"></div>
+    </div>
+
+    <!-- Right Code Column -->
+    <div class="code-column">
+      <div class="code-scroll">
+class NeuralInterface {
+  constructor() {
+    this.connectionStatus = 'disconnected';
+    this.neuralSignals = [];
+    this.matrixProtocol = 'v2.1.3';
+  }
+  
+  connect() {
+    this.connectionStatus = 'connecting';
+    this.establishNeuralLink();
+    this.initializeDataStream();
+    this.beginSignalProcessing();
+  }
+  
+  establishNeuralLink() {
+    const neuralNodes = this.detectNeuralNodes();
+    neuralNodes.forEach(node => {
+      node.activate();
+      node.beginSignalTransmission();
+    });
+  }
+  
+  initializeDataStream() {
+    this.dataStream = new ReadableStream({
+      start: (controller) => {
+        this.streamController = controller;
+        this.beginDataCollection();
+      }
+    });
+  }
+  
+  beginSignalProcessing() {
+    setInterval(() => {
+      this.processNeuralSignals();
+      this.updateInterface();
+      this.syncWithMatrix();
+    }, 50);
+  }
+  
+  processNeuralSignals() {
+    const signals = this.collectSignals();
+    signals.forEach(signal => {
+      this.analyzeSignal(signal);
+      this.generateResponse(signal);
+    });
+  }
+  
+  updateInterface() {
+    const elements = document.querySelectorAll('.neural-element');
+    elements.forEach(element => {
+      element.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+      element.style.transform = `translate(${Math.random() * 10 - 5}px, ${Math.random() * 10 - 5}px)`;
+    });
+  }
+}
+
+// Initialize neural interface
+const neuralInterface = new NeuralInterface();
+neuralInterface.connect();
+      </div>
+    </div>
+  </div>
+
+  <div id="footer">
+    <span><a href="index.html" style="color: inherit; text-decoration: none;">ONE</a></span>
+    <span><a href="02.html" style="color: inherit; text-decoration: none;">TWO</a></span>
+    <span class="active">THREE</span>
+  </div>
+
+  <script>
+    const face = document.getElementById('face');
+    const viewer = document.getElementById('viewer');
+    const glitchOverlays = document.querySelectorAll('.glitch-overlay');
+    const scanLines = document.querySelector('.scan-lines');
+    const noise = document.querySelector('.noise');
+    const codeLines = document.querySelectorAll('.code-line');
+    
+    const directions = [
+      ['up_left', 'up', 'up_right'],
+      ['left', 'center', 'right'],
+      ['down_left', 'down', 'down_right']
+    ];
+
+    let lastImage = 'face_center.png';
+    let glitchCooldown = false;
+
+    function triggerGlitch() {
+      if (glitchCooldown) return;
+      
+      glitchCooldown = true;
+      
+      // Random glitch effects
+      const effects = [
+        () => {
+          viewer.classList.add('screen-shake');
+          setTimeout(() => viewer.classList.remove('screen-shake'), 300);
+        },
+        () => {
+          face.classList.add('distortion');
+          setTimeout(() => face.classList.remove('distortion'), 400);
+        },
+        () => {
+          const randomOverlay = glitchOverlays[Math.floor(Math.random() * glitchOverlays.length)];
+          randomOverlay.classList.add('active');
+          setTimeout(() => randomOverlay.classList.remove('active'), 200);
+        },
+        () => {
+          scanLines.classList.add('active');
+          setTimeout(() => scanLines.classList.remove('active'), 500);
+        },
+        () => {
+          noise.classList.add('active');
+          setTimeout(() => noise.classList.remove('active'), 300);
+        }
+      ];
+
+      // Trigger 1-3 random effects
+      const numEffects = Math.floor(Math.random() * 3) + 1;
+      for (let i = 0; i < numEffects; i++) {
+        const randomEffect = effects[Math.floor(Math.random() * effects.length)];
+        setTimeout(randomEffect, Math.random() * 200);
+      }
+
+      setTimeout(() => {
+        glitchCooldown = false;
+      }, 500);
+    }
+
+    // Add glitch effects to code text
+    function glitchCodeText() {
+      const codeElements = document.querySelectorAll('.code-scroll');
+      codeElements.forEach(element => {
+        const lines = element.innerHTML.split('\n');
+        lines.forEach((line, index) => {
+          if (Math.random() < 0.1) {
+            setTimeout(() => {
+              const span = document.createElement('span');
+              span.textContent = line;
+              span.className = 'code-line glitch-text';
+              element.appendChild(span);
+              setTimeout(() => span.remove(), 300);
+            }, Math.random() * 2000);
+          }
+        });
+      });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+
+      const col = x < 0.33 ? 0 : x > 0.66 ? 2 : 1;
+      const row = y < 0.33 ? 0 : y > 0.66 ? 2 : 1;
+
+      const key = directions[row][col];
+      const newImage = `img/face_${key}.png`;
+      
+      // Trigger glitch on image change
+      if (newImage !== lastImage) {
+        lastImage = newImage;
+        face.src = newImage;
+        triggerGlitch();
+      }
+
+      // Random glitch on mouse movement (10% chance)
+      if (Math.random() < 0.1) {
+        triggerGlitch();
+      }
+    });
+
+    // Additional glitch triggers
+    document.addEventListener('click', () => {
+      triggerGlitch();
+    });
+
+    // Periodic glitches
+    setInterval(() => {
+      if (Math.random() < 0.3) {
+        triggerGlitch();
+      }
+    }, 2000);
+
+    // Glitch code text periodically
+    setInterval(() => {
+      glitchCodeText();
+    }, 3000);
+
+    // Floating Code Snippets
+    const codeSnippets = [
+      'const glitch = new MatrixGlitch();',
+      'neural.activate();',
+      'matrix.connect();',
+      'data.stream();',
+      'signal.process();',
+      'interface.sync();',
+      'node.initialize();',
+      'protocol.establish();',
+      'connection.verify();',
+      'stream.begin();',
+      'neural.link();',
+      'matrix.sync();',
+      'data.flow();',
+      'signal.transmit();',
+      'interface.update();',
+      'node.activate();',
+      'protocol.connect();',
+      'connection.stream();',
+      'neural.process();',
+      'matrix.flow();'
+    ];
+
+    let activeFloatingCodes = [];
+
+    function createFloatingCode(x, y) {
+      const code = document.createElement('div');
+      code.className = 'floating-code';
+      code.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+      code.style.left = x + 'px';
+      code.style.top = y + 'px';
+      document.body.appendChild(code);
+      
+      // Show the code
+      setTimeout(() => {
+        code.classList.add('visible');
+        code.classList.add('glitch');
+      }, 10);
+
+      // Hide and remove after 2 seconds
+      setTimeout(() => {
+        code.classList.remove('visible');
+        setTimeout(() => {
+          if (code.parentNode) {
+            code.parentNode.removeChild(code);
+          }
+        }, 300);
+      }, 2000);
+
+      activeFloatingCodes.push(code);
+    }
+
+    // Create floating code on click
+    document.addEventListener('click', (e) => {
+      // Create 1-3 code snippets per click
+      const numCodes = Math.floor(Math.random() * 3) + 1;
+      for (let i = 0; i < numCodes; i++) {
+        const offsetX = (Math.random() - 0.5) * 100;
+        const offsetY = (Math.random() - 0.5) * 100;
+        createFloatingCode(e.clientX + offsetX, e.clientY + offsetY);
+      }
+    });
+
+    // Clean up any remaining floating codes
+    setInterval(() => {
+      activeFloatingCodes = activeFloatingCodes.filter(code => {
+        if (!code.parentNode) {
+          return false;
+        }
+        return true;
+      });
+    }, 5000);
+  </script>
+</body>
+</html>

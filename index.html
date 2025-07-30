@@ -86,7 +86,6 @@
     <style>
       /* Custom styles for effects not easily replicated in Tailwind */
       body {
-        cursor: none;
         background-image: url(img/noise.png), url(img/bg.jpg);
         background-position: 50% 50%;
       }
@@ -187,32 +186,6 @@
         z-index: -1;
       }
       
-      .smooth-cursor {
-        position: fixed;
-        pointer-events: none;
-        z-index: 10000;
-        transform: translate(-50%, -50%);
-        will-change: transform;
-        mix-blend-mode: difference;
-        opacity: 1;
-        transition: opacity 0.2s ease;
-      }
-      
-      .smooth-cursor svg {
-        filter: drop-shadow(0 0 15px rgba(0, 255, 136, 1)) drop-shadow(0 0 30px rgba(0, 255, 136, 0.6));
-        transform: scale(1.2);
-      }
-      
-      .smooth-cursor.click-effect {
-        animation: cursor-click 0.3s ease;
-      }
-      
-      @keyframes cursor-click {
-        0% { transform: translate(-50%, -50%) scale(1.2); }
-        50% { transform: translate(-50%, -50%) scale(1.5); filter: drop-shadow(0 0 25px rgba(0, 255, 136, 1)) drop-shadow(0 0 50px rgba(0, 255, 136, 0.8)); }
-        100% { transform: translate(-50%, -50%) scale(1.2); }
-      }
-      
       /* Hide scrollbar completely */
       .list::-webkit-scrollbar {
         display: none;
@@ -229,6 +202,30 @@
         background-image: repeating-linear-gradient(transparent, transparent 2px, #0000003d 3px);
         background-size: auto 100%;
         pointer-events: none;
+      }
+      
+      /* Navigation Menu */
+      .nav-menu {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 1em;
+        letter-spacing: 4px;
+        z-index: 10;
+      }
+      
+      .nav-menu span {
+        margin: 0 20px;
+        cursor: pointer;
+        color: gray;
+      }
+      
+      .nav-menu .active {
+        color: white;
+        text-decoration: underline;
       }
     </style>
     <script>document.documentElement.className="js";</script>
@@ -248,10 +245,18 @@
         scrollbar-width: none;  /* Firefox */
       }
     </style>
-    <main class="flex flex-col min-h-screen justify-around flex-nowrap content-around mt-[25px] mix-blend-difference relative">
+    <div class="flex flex-col min-h-screen justify-around flex-nowrap content-around mt-[25px] mix-blend-difference relative">
       <section class="text-left ps-2 text-terminal text-4xl font-bold absolute top-0 left-0 z-10">GLITCHED</section>
+      
+      <!-- Navigation Menu -->
+      <div class="nav-menu">
+        <span class="active">ONE</span>
+        <span><a href="02.html" style="color: inherit; text-decoration: none;">TWO</a></span>
+        <span><a href="03.html" style="color: inherit; text-decoration: none;">THREE</a></span>
+      </div>
+      
       <section class="content flex flex-col p-5 justify-center items-center h-40 relative text-left overflow-hidden mt-[0px]">
-                <ul class="list max-h-40 overflow-y-auto overflow-x-hidden" style="scrollbar-width: none; -ms-overflow-style: none;"">
+        <ul class="list max-h-40 overflow-y-auto overflow-x-hidden" style="scrollbar-width: none; -ms-overflow-style: none;">
           <li class="list__item text-xs cursor-pointer w-full grid text-terminal gap-4 py-1 grid-cols-1 justify-start items-start justify-items-start">
             <span class="list__item-col hover-effect hover-effect--bg-south flex-none px-1 py-0.5 leading-none">const animateText = (element) => {</span>
           </li>
@@ -290,7 +295,8 @@
           </li>
         </ul>
       </section>
-    </main>
+    </div>
+    
     <script src="https://tympanus.net/codrops/adpacks/cda_sponsor.js"></script>
     <!-- JavaScript dependencies -->
     <!-- GSAP library -->

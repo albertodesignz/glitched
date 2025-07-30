@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1984</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: url(img/bg2.jpg) center center;
+      background-size: cover;
+      color: #ff0000;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      height: 100vh;
+      position: relative;
+    }
+
+    /* Nuclear Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
+        linear-gradient(45deg, rgba(0, 0, 0, 0.3) 0%, rgba(26, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.3) 100%);
+      z-index: -2;
+    }
+
+    /* Scan Lines */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: repeating-linear-gradient(
+        transparent,
+        transparent 2px,
+        rgba(255, 0, 0, 0.1) 3px
+      );
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Main Container */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      grid-template-rows: auto 1fr auto;
+      height: 100vh;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    /* Header */
+    .header {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 2px solid #0066ff;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 10px;
+      box-shadow: 0 0 20px rgba(0, 102, 255, 0.5);
+    }
+
+    .title {
+      font-size: 2em;
+      font-family: "bd-geminis", sans-serif;
+font-weight: 400;
+font-style: normal;
+      color: #ffff00;
+      text-shadow: 0 0 10px #ffff00;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { text-shadow: 0 0 10px #ffff00; }
+      50% { text-shadow: 0 0 20px #ffff00, 0 0 30px #ffff00; }
+    }
+
+    /* Decrypted Text Animation */
+    .decrypted-text {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .decrypted-text::before {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      color: #ffff00;
+      overflow: hidden;
+      border-right: 2px solid #ffff00;
+      animation: typing 3s steps(30) infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes typing {
+      0%, 90%, 100% {
+        width: 0;
+      }
+      30%, 60% {
+        width: 100%;
+      }
+    }
+
+    .status {
+      font-size: 1.2em;
+      color: #ff0000;
+    }
+
+    /* Left Panel */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel {
+      border: 2px solid #0066ff;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      box-shadow: 0 0 15px rgba(0, 102, 255, 0.3);
+    }
+
+    .panel-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #ffff00;
+      margin-bottom: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ffff00;
+      padding-bottom: 5px;
+    }
+
+    .gauge {
+      width: 100%;
+      height: 120px;
+      position: relative;
+      margin: 10px 0;
+    }
+
+    .gauge-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 8px solid #333;
+      border-top: 8px solid #0066ff;
+      animation: spin 2s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .gauge-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    /* Center Panel */
+    .center-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .main-display {
+      flex: 1;
+      border: 3px solid #0066ff;
+      background: url(img/bg2.jpg) center center;
+      background-size: cover;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 25px rgba(0, 102, 255, 0.4);
+      position: relative;
+    }
+
+    .main-display::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1;
+    }
+
+    .main-display > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .nuclear-warning {
+      font-size: 3em;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      animation: warning-blink 1s infinite;
+    }
+
+    @keyframes warning-blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.3; }
+    }
+
+    .countdown {
+      font-size: 4em;
+      font-weight: bold;
+      color: #ff0000;
+      text-shadow: 0 0 20px #ff0000;
+      margin: 20px 0;
+    }
+
+    .coordinates {
+      font-size: 1.2em;
+      margin: 10px 0;
+    }
+
+    /* Right Panel */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .data-stream {
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .data-line {
+      font-size: 0.9em;
+      margin: 2px 0;
+      animation: data-scroll 10s linear infinite;
+    }
+
+    @keyframes data-scroll {
+      0% { transform: translateY(100%); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100%); opacity: 0; }
+    }
+
+    /* Control Panel */
+    .control-panel {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border: 2px solid #ff0000;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+    }
+
+    .button {
+      background: #000;
+      border: 2px solid #0066ff;
+      color: #0066ff;
+      padding: 10px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    .button:hover {
+      background: #0066ff;
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 102, 255, 0.8);
+    }
+
+    .button.danger {
+      background: #0066ff;
+      color: #000;
+      animation: danger-pulse 1s infinite;
+    }
+
+    @keyframes danger-pulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(0, 102, 255, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(0, 102, 255, 1); }
+    }
+
+    /* Navigation */
+    .nav-menu {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 20px;
+      z-index: 1000;
+    }
+
+    .nav-menu span {
+      color: #0066ff;
+      cursor: pointer;
+      font-size: 1.2em;
+      text-shadow: 0 0 5px #0066ff;
+    }
+
+    .nav-menu .active {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    /* Nuclear Particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #0066ff;
+      border-radius: 50%;
+      animation: particle-float 8s infinite linear;
+    }
+
+    @keyframes particle-float {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Retro Grid */
+    .retro-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 102, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 102, 255, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: -1;
+      animation: grid-pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes grid-pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+
+    /* Dissolve Effect */
+    .dissolve-effect {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .dissolve-effect.active {
+      opacity: 1;
+    }
+
+    .dissolve-pixel {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #0066ff;
+      animation: dissolve-fade 1s ease-out forwards;
+    }
+
+    @keyframes dissolve-fade {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0); }
+    }
+
+    /* Pixel Trail Effect */
+    .pixel-trail {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      width: 4px;
+      height: 4px;
+      background: #ffff00;
+      border-radius: 50%;
+      animation: pixel-fade 1s ease-out forwards;
+    }
+
+    @keyframes pixel-fade {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+    }
+
+    /* Hide default cursor */
+    body {
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .custom-cursor {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: #ffff00;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      mix-blend-mode: difference;
+    }
+
+    /* Crosshair */
+    .crosshair {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    .crosshair-line {
+      position: absolute;
+      background: #ffff00;
+      opacity: 0.8;
+    }
+
+    .crosshair-line.horizontal {
+      width: 20px;
+      height: 2px;
+      left: -10px;
+      top: -1px;
+    }
+
+    .crosshair-line.vertical {
+      width: 2px;
+      height: 20px;
+      left: -1px;
+      top: -10px;
+    }
+
+    .crosshair-dot {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #ffff00;
+      border-radius: 50%;
+      left: -2px;
+      top: -2px;
+      opacity: 0.6;
+    }
+  </style>
+  <link rel="stylesheet" href="https://use.typekit.net/ema1zlb.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <div class="nav-menu">
+    <span><a href="index.html" style="color: inherit; text-decoration: none;">ONE</a></span>
+    <span class="active">TWO</span>
+    <span><a href="03.html" style="color: inherit; text-decoration: none;">THREE</a></span>
+  </div>
+
+  <!-- Nuclear Particles -->
+  <div class="particles" id="particles"></div>
+  
+  <!-- Retro Grid -->
+  <div class="retro-grid"></div>
+  
+  <!-- Dissolve Effect -->
+  <div class="dissolve-effect" id="dissolveEffect"></div>
+  
+  <!-- Custom Cursor -->
+  <div class="custom-cursor" id="customCursor"></div>
+  
+  <!-- Crosshair -->
+  <div class="crosshair" id="crosshair">
+    <div class="crosshair-line horizontal"></div>
+    <div class="crosshair-line vertical"></div>
+    <div class="crosshair-dot"></div>
+  </div>
+
+  <div class="dashboard">
+    <!-- Header -->
+    <div class="header">
+      <div class="title">GLITCHED</div>
+      
+    </div>
+
+    <!-- Left Panel -->
+    <div class="left-panel">
+      <div class="panel">
+        <div class="panel-title"> CORE</div>
+        <div class="gauge">
+          <div class="gauge-circle"></div>
+          <div class="gauge-value">98%</div>
+        </div>
+        <div style="text-align: center; margin-top: 10px;">
+          <div>TEMP: 1,247°C</div>
+          <div>PRESSURE: 2.4 MPa</div>
+        </div>
+      </div>
+
+      <div class="panel">
+  >
+        <div style="margin: 10px 0;">
+          <div>ALPHA: 0.12 mSv/h</div>
+          <div>BETA: 0.08 mSv/h</div>
+          <div>GAMMA: 0.15 mSv/h</div>
+        </div>
+        <div style="color: #00ff00; text-align: center; margin-top: 10px;">
+          STATUS: NORMAL
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">SECURITY SYSTEMS</div>
+        <div style="margin: 10px 0;">
+          <div>✓ PRIMARY CONTAINMENT</div>
+          <div>✓ SECONDARY CONTAINMENT</div>
+          <div>✓ EMERGENCY COOLING</div>
+          <div>✓ RADIATION MONITORING</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Panel -->
+    <div class="center-panel">
+      <div class="main-display">
+    
+        <div class="countdown" id="countdown">00:00:00</div>
+        <div class="coordinates">
+          <div>LATITUDE: 40.7128° N</div>
+          <div>LONGITUDE: 74.0060° W</div>
+          <div>ALTITUDE: 1,234 m</div>
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+          <div>SYSTEM STATUS: OPERATIONAL</div>
+          <div>LAST UPDATE: 1984-12-19 23:42:17</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+      <div class="panel">
+        <div class="panel-title">DATA STREAM</div>
+        <div class="data-stream" id="dataStream">
+          <div class="data-line">INITIALIZING NUCLEAR CORE...</div>
+          <div class="data-line">SCANNING RADIATION LEVELS...</div>
+          <div class="data-line">CHECKING CONTAINMENT SYSTEMS...</div>
+          <div class="data-line">MONITORING TEMPERATURE GRADIENTS...</div>
+          <div class="data-line">ANALYZING PRESSURE READINGS...</div>
+          <div class="data-line">VALIDATING SECURITY PROTOCOLS...</div>
+          <div class="data-line">SYSTEM STATUS: NOMINAL</div>
+          <div class="data-line">ALL SYSTEMS OPERATIONAL</div>
+          <div class="data-line">READY FOR NUCLEAR OPERATIONS</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">EMERGENCY PROTOCOLS</div>
+        <div style="margin: 10px 0;">
+          <div>PROTOCOL ALPHA: READY</div>
+          <div>PROTOCOL BETA: READY</div>
+          <div>PROTOCOL GAMMA: READY</div>
+          <div>PROTOCOL DELTA: READY</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">SYSTEM LOG</div>
+        <div style="font-size: 0.8em; margin: 10px 0;">
+          <div>23:42:15 - CORE TEMPERATURE STABLE</div>
+          <div>23:42:16 - RADIATION LEVELS NORMAL</div>
+          <div>23:42:17 - ALL SYSTEMS OPERATIONAL</div>
+          <div>23:42:18 - SECURITY CLEARANCE VERIFIED</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+      <button class="button">INITIALIZE CORE</button>
+      <button class="button">EMERGENCY SHUTDOWN</button>
+      <button class="button danger">ACTIVATE PROTOCOL</button>
+      <button class="button">SYSTEM DIAGNOSTIC</button>
+      <button class="button">CLEARANCE OVERRIDE</button>
+    </div>
+  </div>
+
+  <script>
+    // Countdown Timer
+    let countdown = 0;
+    const countdownElement = document.getElementById('countdown');
+    
+    function updateCountdown() {
+      const hours = Math.floor(countdown / 3600);
+      const minutes = Math.floor((countdown % 3600) / 60);
+      const seconds = countdown % 60;
+      
+      countdownElement.textContent = 
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      countdown++;
+    }
+    
+    setInterval(updateCountdown, 1000);
+
+    // Nuclear Particles
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 8 + 's';
+      particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+      document.getElementById('particles').appendChild(particle);
+      
+      setTimeout(() => {
+        particle.remove();
+      }, 10000);
+    }
+    
+    setInterval(createParticle, 200);
+
+    // Data Stream Animation
+    const dataStream = document.getElementById('dataStream');
+    const dataLines = [
+      'SCANNING NUCLEAR CORE...',
+      'TEMPERATURE: 1,247°C',
+      'PRESSURE: 2.4 MPa',
+      'RADIATION: NORMAL',
+      'CONTAINMENT: SECURE',
+      'SYSTEM STATUS: OPERATIONAL',
+      'SECURITY CLEARANCE: LEVEL 5',
+      'EMERGENCY PROTOCOLS: READY',
+      'MONITORING RADIATION LEVELS...',
+      'CORE STABILITY: 98%',
+      'BACKUP SYSTEMS: ONLINE',
+      'COMMUNICATION: ACTIVE'
+    ];
+    
+    function addDataLine() {
+      const line = document.createElement('div');
+      line.className = 'data-line';
+      line.textContent = dataLines[Math.floor(Math.random() * dataLines.length)];
+      dataStream.appendChild(line);
+      
+      setTimeout(() => {
+        line.remove();
+      }, 10000);
+    }
+    
+    setInterval(addDataLine, 3000);
+
+    // Button Interactions
+    document.querySelectorAll('.button').forEach(button => {
+      button.addEventListener('click', function() {
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          this.style.transform = 'scale(1)';
+        }, 100);
+      });
+    });
+
+    // Nuclear Warning Effect
+    setInterval(() => {
+      document.body.style.filter = Math.random() > 0.95 ? 'hue-rotate(10deg)' : 'none';
+    }, 100);
+
+    // Dissolve Effect
+    function createDissolveEffect(x, y) {
+      const dissolveEffect = document.getElementById('dissolveEffect');
+      dissolveEffect.innerHTML = '';
+      
+      // Create dissolve pixels around click point
+      for (let i = 0; i < 50; i++) {
+        const pixel = document.createElement('div');
+        pixel.className = 'dissolve-pixel';
+        pixel.style.left = (x + (Math.random() - 0.5) * 200) + 'px';
+        pixel.style.top = (y + (Math.random() - 0.5) * 200) + 'px';
+        pixel.style.animationDelay = Math.random() * 0.5 + 's';
+        dissolveEffect.appendChild(pixel);
+      }
+      
+      dissolveEffect.classList.add('active');
+      setTimeout(() => {
+        dissolveEffect.classList.remove('active');
+      }, 1000);
+    }
+
+    // Mouse click dissolve effect
+    document.addEventListener('click', (e) => {
+      createDissolveEffect(e.clientX, e.clientY);
+    });
+
+    // Decrypted Text Effect
+    function createDecryptedText(element, text) {
+      element.setAttribute('data-text', text);
+      element.classList.add('decrypted-text');
+    }
+
+    // Apply decrypted text effect to titles
+    document.addEventListener('DOMContentLoaded', function() {
+      const titles = document.querySelectorAll('.title, .panel-title');
+      titles.forEach(title => {
+        const originalText = title.textContent;
+        createDecryptedText(title, originalText);
+      });
+    });
+
+    // Pixel Trail Effect
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+    let trailPixels = [];
+
+    const customCursor = document.getElementById('customCursor');
+    const crosshair = document.getElementById('crosshair');
+
+    // Update mouse position
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    // Create pixel trail
+    function createPixelTrail(x, y) {
+      const pixel = document.createElement('div');
+      pixel.className = 'pixel-trail';
+      pixel.style.left = x + 'px';
+      pixel.style.top = y + 'px';
+      document.body.appendChild(pixel);
+      
+      trailPixels.push(pixel);
+      
+      // Remove pixel after animation
+      setTimeout(() => {
+        if (pixel.parentNode) {
+          pixel.parentNode.removeChild(pixel);
+        }
+        trailPixels = trailPixels.filter(p => p !== pixel);
+      }, 1000);
+    }
+
+    // Animate cursor and create trail
+    function animateCursor() {
+      // Smooth cursor movement
+      cursorX += (mouseX - cursorX) * 0.1;
+      cursorY += (mouseY - cursorY) * 0.1;
+      
+      customCursor.style.left = cursorX + 'px';
+      customCursor.style.top = cursorY + 'px';
+      
+      // Update crosshair position
+      crosshair.style.left = cursorX + 'px';
+      crosshair.style.top = cursorY + 'px';
+      
+      // Create trail pixels randomly
+      if (Math.random() < 0.3) {
+        createPixelTrail(cursorX, cursorY);
+      }
+      
+      requestAnimationFrame(animateCursor);
+    }
+
+    // Start cursor animation
+    animateCursor();
+  </script>
+</body>
+</html>
