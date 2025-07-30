@@ -231,9 +231,11 @@ font-style: normal;
 
     .countdown {
       font-size: 4em;
-      font-weight: bold;
-      color: #ff0000;
-      text-shadow: 0 0 20px #ff0000;
+      font-family: "bd-geminis", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+      color: #ffff00;
+      text-shadow: 0 0 20px #ffff00;
       margin: 20px 0;
     }
 
@@ -626,19 +628,42 @@ font-style: normal;
   </div>
 
   <script>
-    // Countdown Timer
-    let countdown = 0;
+    // Count-up Animation
+    function animateCountUp(element, targetValue, duration = 2000) {
+      let startValue = 0;
+      const startTime = performance.now();
+      
+      function updateCount(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuart);
+        
+        // Format as HH:MM:SS
+        const hours = Math.floor(currentValue / 3600);
+        const minutes = Math.floor((currentValue % 3600) / 60);
+        const seconds = currentValue % 60;
+        
+        element.textContent = 
+          `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (progress < 1) {
+          requestAnimationFrame(updateCount);
+        }
+      }
+      
+      requestAnimationFrame(updateCount);
+    }
+
+    // Initialize count-up animation
     const countdownElement = document.getElementById('countdown');
+    let currentCount = 0;
     
     function updateCountdown() {
-      const hours = Math.floor(countdown / 3600);
-      const minutes = Math.floor((countdown % 3600) / 60);
-      const seconds = countdown % 60;
-      
-      countdownElement.textContent = 
-        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      
-      countdown++;
+      currentCount++;
+      animateCountUp(countdownElement, currentCount, 1000);
     }
     
     setInterval(updateCountdown, 1000);
